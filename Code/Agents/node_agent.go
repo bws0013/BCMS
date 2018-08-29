@@ -25,6 +25,7 @@ func main() {
 func GetFiles(w http.ResponseWriter, r *http.Request) {
   json.NewEncoder(w).Encode(files)
 }
+
 func GetFile(w http.ResponseWriter, r *http.Request) {
   params := mux.Vars(r)
   for _, item := range files {
@@ -33,8 +34,26 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
     }
   }
 }
-func CreateFile(w http.ResponseWriter, r *http.Request) {}
-func DeleteFile(w http.ResponseWriter, r *http.Request) {}
+
+func CreateFile(w http.ResponseWriter, r *http.Request) {
+  params := mux.Vars(r)
+  var file File
+  _ = json.NewDecoder(r.Body).Decode(&person)
+  file.ID = params["id"]
+  files = append(files, file)
+  json.NewEncoder(w).Encode(files)
+}
+
+func DeleteFile(w http.ResponseWriter, r *http.Request) {
+  params := mux.Vars(r)
+  for index, item := range files {
+    if item.ID == params["id"] {
+      files = append(files[:index], files[index+1]...)
+      break
+    }
+    json.NewEncoder(w).Encode(files)
+  }
+}
 
 func addFiles() {
   files = append(files, File{ID: "1", Filename: "hello.java", MD5: "598a9fc1486631bb148e511c4ea879b8", Content: &Content{Location: "/usr/local/java/cool/", Data: "hello.java content stuff"}})
