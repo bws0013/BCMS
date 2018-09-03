@@ -19,7 +19,7 @@ func main() {
   router.HandleFunc("/files/{id}", GetFile).Methods("GET")
   router.HandleFunc("/files/{id}", CreateFile).Methods("POST")
   router.HandleFunc("/files/{id}", DeleteFile).Methods("DELETE")
-  log.Fatal(http.ListenAndServe(":8000", router))
+  log.Fatal(http.ListenAndServe(":8889", router))
 }
 
 func GetFiles(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +38,7 @@ func GetFile(w http.ResponseWriter, r *http.Request) {
 func CreateFile(w http.ResponseWriter, r *http.Request) {
   params := mux.Vars(r)
   var file File
-  _ = json.NewDecoder(r.Body).Decode(&person)
+  _ = json.NewDecoder(r.Body).Decode(&file)
   file.ID = params["id"]
   files = append(files, file)
   json.NewEncoder(w).Encode(files)
@@ -47,8 +47,8 @@ func CreateFile(w http.ResponseWriter, r *http.Request) {
 func DeleteFile(w http.ResponseWriter, r *http.Request) {
   params := mux.Vars(r)
   for index, item := range files {
-    if item.ID == params["id"] {
-      files = append(files[:index], files[index+1]...)
+    if item.ID == params["global_id"] {
+      files = append(files[:index], files[index+1:]...)
       break
     }
     json.NewEncoder(w).Encode(files)
